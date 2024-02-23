@@ -9,5 +9,5 @@ kind: Service
       port: 80
       targetPort: 8080
       protocol: TCP
-    selector:
+  selector:
       app: spring-boot-app
