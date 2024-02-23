@@ -1,7 +1,7 @@
 pipeline {
   agent {
     docker {
-      image 'iamsaikishore/maven-docker-agent:v1'
+      image 'aps0813568/maven-docker-agent:v1'
       args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
     }
   }
@@ -9,7 +9,7 @@ pipeline {
     stage('Checkout') {
       steps {
         sh 'echo passed'
-        git branch: 'master', url: 'https://github.com/ayushpratapsingh/springbootapp.git'
+        git branch: 'master', url: 'https://github.com/ayushpratapsingh/spapp.git'
       }
     }
     stage('Build and Test') {
@@ -21,7 +21,7 @@ pipeline {
     }
     stage('Static Code Analysis') {
       environment {
-        SONAR_URL = "http://13.232.6.130:9000/"
+        SONAR_URL = "http://54.91.35.57:9000/"
       }
       steps {
         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
@@ -31,7 +31,7 @@ pipeline {
     }
     stage('Build and Push Docker Image') {
       environment {
-        DOCKER_IMAGE = "iamsaikishore/spring-boot-app:${BUILD_NUMBER}"
+        DOCKER_IMAGE = "aps0813568/spring-boot-app:${BUILD_NUMBER}"
         // DOCKERFILE_LOCATION = "spring-boot-app/Dockerfile"
         REGISTRY_CREDENTIALS = credentials('docker-cred')
       }
@@ -47,7 +47,7 @@ pipeline {
     }
     stage('Update Deployment File') {
         environment {
-            GIT_REPO_NAME="springbootapp"
+            GIT_REPO_NAME="spapp"
             GIT_USER_NAME = "ayushpratapsingh"
         }
         steps {
@@ -57,7 +57,7 @@ pipeline {
                     git config user.name "ayushpratapsingh"
                     BUILD_NUMBER=${BUILD_NUMBER}
                     // sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
-                    sed -i "19c \        image: iamsaikishore/spring-boot-app:${BUILD_NUMBER}" spring-boot-app-manifests/deployment.yml
+                    sed -i "19c \        image: aps0813568/spring-boot-app:${BUILD_NUMBER}" spring-boot-app-manifests/deployment.yml
                     // sed -i -e "s/spring-boot-app:*/spring-boot-app:${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
                     git add spring-boot-app-manifests/deployment.yml
                     git commit -m "Update deployment image to version ${BUILD_NUMBER}"
