@@ -8,6 +8,7 @@ kind: Service
     - name: http
       port: 80
       targetPort: 8080
+      nodePort: 32321
       protocol: TCP
     selector:
       app: spring-boot-app
